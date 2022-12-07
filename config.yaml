@@ -1,0 +1,49 @@
+users:
+  count: 500
+  fields:
+    name:
+      func: name
+    ip_address:
+      generator: ipv4
+      cidr_range: "172.16.0.0/12"
+      excluded: ["172.16.0.1", "172.16.0.3"]
+    user_agent:
+      func: generators.web.user_agent
+  save_to: users.json
+
+timestamps:
+  start: 2022-12-02 10:00
+  interval: 3
+
+
+pattern: "<13>$time 192.0.2.1 CEF:0|Forcepoint|Security|7.7.0|9|Transaction $proxy_action|1| act=$proxy_action app=http dvc=192.0.2.2 dst=192.0.2.3 dhost=$domain dpt=80 src=$src_ip spt=$src_port suser=LDAP://$src_ip OU\\=User,DC\\=example,DC\\=com/sanitized destinationTranslatedPort=51101 rt=1362603348000 $request_data requestClientApplication=$user_agent reason=- cs1Label=Policy cs1=role-8**Test Standard ,role-8**Test Standard  cs2Label=DynCat cs2=0 cs3Label=ContentType cs3=text/plain;charset\\=UTF-8 cn1Label=DispositionCode cn1=1026 cn2Label=ScanDuration cn2=1 request=http://$domain/$path"
+
+fields:
+  time:
+    provider: timestamp
+    format: "%b %d %H:%M:%S"
+  proxy_action:
+    func: from_list
+    values:
+      - permitted
+      - rejected
+  src_ip:
+    provider: user
+    attribute: ip_address
+  src_port:
+    func: randint
+    min: 2048
+    max: 16000
+  request_data:
+    func: generators.custom.request
+  user_agent:
+    provider: user
+    attribute: user_agent
+  domain:
+    func: generators.web.domain
+  path:
+    func: generators.web.request_uri
+
+output_file: ./output.log
+log_entries: 1000000
+# log_size: 1000000
