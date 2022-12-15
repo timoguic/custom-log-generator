@@ -11,7 +11,7 @@ def name():
 
 def from_file(filename=None):
     with open(filename, "r") as fp:
-        return random.choice(fp.readlines()).strip()
+        return random.choice([line.strip() for line in fp])
 
 
 def from_list(values=None):

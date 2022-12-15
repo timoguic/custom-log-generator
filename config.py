@@ -13,19 +13,15 @@ def check_for_pattern(data):
 
 
 def check_users(data):
-    if "users" in data:
+    if "users" not in data:
+        return
+
+    if "from_file" not in data["users"]:
         if "count" not in data["users"]:
             raise KeyError("No `count` defined for the user provider.")
 
-        if "fields" not in data:
+        if "fields" not in data["users"]:
             raise KeyError("No `fields` defined for the user provider.")
-
-    if "users_file" in data:
-        if "users" in data:
-            raise KeyError("Cannot define users AND import users.")
-
-        if not Path(data["users_file"]).is_file():
-            raise KeyError(f"Users file {data['users_file']} does not exist.")
 
 
 def check_fields(data):

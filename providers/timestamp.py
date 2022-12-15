@@ -10,12 +10,16 @@ class TimeProvider:
         if not start:
             start = dt.now()
         else:
-            start = dateparser.parse(config["start"])
+            start = dateparser.parse(
+                config["start"],
+                settings={"DATE_ORDER": "DMY", "PREFER_LOCALE_DATE_ORDER": False},
+            )
 
         self.current_time = start
         self.interval = config["interval"]
 
     @property
     def timestamp(self):
+        cur_time = self.current_time
         self.current_time = self.current_time + timedelta(seconds=self.interval)
-        return self.current_time
+        return cur_time

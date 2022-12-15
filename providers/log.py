@@ -19,7 +19,7 @@ class LogProvider:
 
     @property
     def done(self):
-        return self.nb_lines > self.count
+        return self.nb_lines >= self.count
 
     def generate(self):
         current_user = self.user_provider.random_user

@@ -15,7 +15,7 @@ class UserProvider:
         It should be "sanitized".
         """
         if config.get("from_file"):
-            self.load_from_file(config["users_file"])
+            self.load_from_file(config["from_file"])
         else:
             print("Generating users...")
             self.make_from_config(config["count"], **config["fields"])
@@ -43,11 +43,17 @@ class UserProvider:
             self.users.append(user_klass(**mapping))
 
     def load_from_file(self, filename):
-        with open(filename, "r") as fp:
-            data = json.load(fp)
+        try:
+            with open(filename, "r") as fp:
+                data = json.load(fp)
+        except json.JSONDecodeError:
+            raise RuntimeError("Users file is invalid JSON.")
 
         if not len(data):
             raise RuntimeError("Users file seems to be empty.")
+
+        if type(data) is not list:
+            raise RuntimeError("Users file has an invalid format.")
 
         first = data[0]
         user_klass = self.make_user_class(first.keys())
