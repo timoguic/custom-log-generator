@@ -4,7 +4,7 @@ from string import Template
 
 import yaml
 
-log = getLogger(__name__)
+logger = getLogger("clg." + __name__)
 
 
 def check_for_pattern(data):
@@ -13,6 +13,7 @@ def check_for_pattern(data):
 
 
 def check_users(data):
+    """Check the users section of the config file"""
     if "users" not in data:
         return
 
@@ -25,6 +26,7 @@ def check_users(data):
 
 
 def check_fields(data):
+    """Check that the pattern and field match"""
     try:
         p = Template(data["pattern"])
         mapping = {name: "" for name in data["fields"].keys()}
@@ -33,18 +35,35 @@ def check_fields(data):
         raise KeyError("The pattern and fields don't match.")
 
 
-def check_config(data):
-    validators = [check_for_pattern, check_fields, check_users]
+def check_timestamp(data):
+    """Check the timestamps section of the config file"""
+    if "timestamps" not in data:
+        raise KeyError("No `timestamps` configuration set.")
 
-    for func in validators:
-        func(data)
+    if "office_hours" in data["timestamps"]:
+        hours = data["timestamps"]["office_hours"]
+        if not hours.get("start") or not hours.get("end"):
+            raise KeyError("Must define `start` and `end` for office hours.")
+
+        if hours["start"] >= hours["end"]:
+            raise ValueError("Office hours start must be strictly less than end.")
+
+        for val in hours["start"], hours["end"]:
+            if not 0 <= val <= 24:
+                raise ValueError("Office hours start and end must be between 0 and 24.")
 
 
 def load_config(yaml_file):
+    """Read the configuration file and validates it"""
     with open(yaml_file, "r") as f:
-        log.debug(f"Loading file {yaml_file}")
+        logger.debug(f"Loading config from {yaml_file}.")
         data = yaml.load(f, Loader=yaml.FullLoader)
 
-        check_config(data)
+        validators = [check_for_pattern, check_fields, check_users, check_timestamp]
+
+        for func in validators:
+            func(data)
+
+        logger.debug("Config file seems fine.")
 
         return data

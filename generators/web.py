@@ -1,3 +1,4 @@
+"""Web oriented generators"""
 from pathlib import Path
 
 from .base import from_list

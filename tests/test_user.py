@@ -26,7 +26,7 @@ fields:
 
 def test_load_users_from_file(USERS_JSON):
     with patch("builtins.open", new_callable=mock_open, read_data=USERS_JSON):
-        up = UserProvider({"from_file": "userfile.json"})
+        up = UserProvider(from_file="userfile.json")
 
         assert len(up.users) == 1
         u = up.random_user
@@ -35,14 +35,11 @@ def test_load_users_from_file(USERS_JSON):
 
 
 def test_generate_users():
-    CONF = {
-        "fields": {
-            "something": {"provider": "static", "data": "Hello!"},
-            "name": {"func": "name"},
-        },
-        "count": 10,
+    fields = {
+        "something": {"provider": "static", "data": "Hello!"},
+        "name": {"func": "name"},
     }
-    up = UserProvider(CONF)
+    up = UserProvider(count=10, fields=fields)
     assert len(up.users) == 10
     assert hasattr(up.users[0], "name")
     assert up.users[0].something == "Hello!"
@@ -51,16 +48,10 @@ def test_generate_users():
 def test_load_from_file_invalid_json():
     with patch("builtins.open", new_callable=mock_open, read_data=""):
         with pytest.raises(RuntimeError):
-            UserProvider({"from_file": "userfile.json"})
+            UserProvider(from_file="userfile.json")
 
 
 def test_load_from_file_empty_json():
     with patch("builtins.open", new_callable=mock_open, read_data="[]"):
         with pytest.raises(RuntimeError):
-            UserProvider({"from_file": "empty.json"})
-
-
-def test_load_from_file_empty_json():
-    with patch("builtins.open", new_callable=mock_open, read_data="{}"):
-        with pytest.raises(RuntimeError):
-            UserProvider({"from_file": "empty.json"})
+            UserProvider(from_file="empty.json")

@@ -66,10 +66,14 @@ Configure the time provider by setting the `timestamps` section of the configura
 timestamps:
   start: 2022-12-02 10:00
   interval: 3
+  office_hours:
+    start: 9
+    end: 18
 ```
 
-* `start`: the start date / time for log generation
+* `start`: the start date / time for log generation (optional, defaults to "now")
 * `interval`: the number of seconds between each log entry
+* `office_hours`: optional. If specified it must contain a `start` and `end` values - no logs will be generated outside of these hours. In this example, logs will only have timestamps between 9.00 and 18.00.
 
 # Pattern
 

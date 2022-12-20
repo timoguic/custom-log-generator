@@ -1,7 +1,14 @@
+"""Custom providers for special uses"""
+
 import random
 
 
 def request():
+    """Returns a string that mimics some HTTP request, with method and in/out bytes
+
+    If the method is GET, in is much larger than out.
+    Otherwise, out is much larger than in.
+    """
     method = "GET"
     if random.random() > 0.8:
         method = "POST"

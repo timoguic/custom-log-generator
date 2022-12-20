@@ -14,6 +14,9 @@ users:
 timestamps:
   start: 2022-12-02 10:00
   interval: 3
+  office_hours:
+    start: 9
+    end: 18
 
 
 pattern: "<13>$time 192.0.2.1 CEF:0|Forcepoint|Security|7.7.0|9|Transaction $proxy_action|1| act=$proxy_action app=http dvc=192.0.2.2 dst=192.0.2.3 dhost=$domain dpt=80 src=$src_ip spt=$src_port suser=LDAP://$src_ip OU\\=User,DC\\=example,DC\\=com/sanitized destinationTranslatedPort=51101 rt=1362603348000 $request_data requestClientApplication=$user_agent reason=- cs1Label=Policy cs1=role-8**Test Standard ,role-8**Test Standard  cs2Label=DynCat cs2=0 cs3Label=ContentType cs3=text/plain;charset\\=UTF-8 cn1Label=DispositionCode cn1=1026 cn2Label=ScanDuration cn2=1 request=http://$domain/$path"
